@@ -1,0 +1,42 @@
+version: '3.0' 
+
+services:
+  
+  server:
+    build: .
+    ports:
+      - "80:80"
+    networks:
+      - auth_api
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:14.3
+    networks: 
+      - auth_api
+    env_file:
+      - .env
+    volumes:
+      - data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d auth_api'"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  session_storage:
+    image: redis:7.2.4
+    networks:
+      - auth_api
+    ports:
+      - "6379:6379"
+
+volumes:
+  data:
+
+networks:
+  auth_api:
+    external:
+      false
