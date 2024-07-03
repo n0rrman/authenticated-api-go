@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
@@ -34,7 +35,7 @@ func (s *session) init() {
 	s.store.KeyPrefix("session_")
 	s.store.Options(sessions.Options{
 		Path:     "/",
-		Domain:   "localhost",
+		Domain:   os.Getenv("BASE_URL"),
 		HttpOnly: true,
 		// MaxAge: 86400 * 20,
 		MaxAge: 10,
