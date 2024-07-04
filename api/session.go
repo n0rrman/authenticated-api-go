@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/gorilla/sessions"
@@ -12,13 +14,16 @@ import (
 )
 
 type session struct {
-	name   string
-	client *redis.Client
-	store  *redisstore.RedisStore
+	name         string
+	authVerifier string
+	successURL   string
+	failedURL    string
+	expDays      int
+	client       *redis.Client
+	store        *redisstore.RedisStore
 }
 
 func (s *session) init() {
-
 	// Redis Client
 	s.client = redis.NewClient(&redis.Options{
 		Addr: "session_storage:6379",
@@ -37,15 +42,31 @@ func (s *session) init() {
 		Path:     "/",
 		Domain:   os.Getenv("BASE_URL"),
 		HttpOnly: true,
-		// MaxAge: 86400 * 20,
-		MaxAge: 10,
+		MaxAge:   86400 * s.expDays,
 	})
 }
 
-func (s *session) login(c echo.Context) {
-	sess, _ := s.store.Get(c.Request(), s.name)
+func (s *session) login(ctx echo.Context, id string, username string, pictureURL string, method string) {
+	sess, _ := s.store.Get(ctx.Request(), s.name)
+
 	sess.Values["authenticated"] = true
-	sess.Save(c.Request(), c.Response())
+	sess.Values["id"] = id
+	sess.Values["username"] = username
+	sess.Values["pictureURL"] = pictureURL
+	sess.Values["method"] = method
+
+	fmt.Println(method, "id:", id, "username:", username, "signed in")
+	sess.Save(ctx.Request(), ctx.Response())
+}
+
+func (s *session) logout(ctx echo.Context) error {
+	sess, _ := s.store.Get(ctx.Request(), s.name)
+
+	sess.Options.MaxAge = -1
+
+	fmt.Println(sess.Values["method"], "id:", sess.Values["id"], "username:", sess.Values["username"], "signed out")
+	sess.Save(ctx.Request(), ctx.Response())
+	return ctx.Redirect(http.StatusMovedPermanently, s.successURL)
 }
 
 func (s *session) isAuthenticated(c echo.Context) bool {
