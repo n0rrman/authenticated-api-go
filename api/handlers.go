@@ -17,8 +17,8 @@ func devSuccess(ctx echo.Context) error {
 func (s *session) statusCheck(ctx echo.Context) error {
 	auth := s.isAuthenticated(ctx)
 	if auth {
-		return ctx.String(http.StatusOK, "logged in")
+		return ctx.String(http.StatusOK, "signed in")
 	} else {
-		return ctx.String(http.StatusForbidden, "not logged in")
+		return ctx.String(http.StatusForbidden, "not signed in")
 	}
 }

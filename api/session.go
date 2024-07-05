@@ -46,7 +46,7 @@ func (s *session) init() {
 	})
 }
 
-func (s *session) login(ctx echo.Context, id string, username string, pictureURL string, method string) {
+func (s *session) signin(ctx echo.Context, id string, username string, pictureURL string, method string) {
 	sess, _ := s.store.Get(ctx.Request(), s.name)
 
 	sess.Values["authenticated"] = true
@@ -59,14 +59,15 @@ func (s *session) login(ctx echo.Context, id string, username string, pictureURL
 	sess.Save(ctx.Request(), ctx.Response())
 }
 
-func (s *session) logout(ctx echo.Context) error {
+func (s *session) signout(ctx echo.Context) error {
 	sess, _ := s.store.Get(ctx.Request(), s.name)
 
 	sess.Options.MaxAge = -1
 
 	fmt.Println(sess.Values["method"], "id:", sess.Values["id"], "username:", sess.Values["username"], "signed out")
 	sess.Save(ctx.Request(), ctx.Response())
-	return ctx.Redirect(http.StatusMovedPermanently, s.successURL)
+
+	return ctx.String(http.StatusOK, "signing out")
 }
 
 func (s *session) isAuthenticated(c echo.Context) bool {

@@ -24,10 +24,12 @@ func main() {
 	// Routes
 	//-- Session
 	e.GET("/auth/status", s.statusCheck)
-	e.GET("/auth/logout", s.logout)
+	e.GET("/auth/signout", s.signout)
 	//-- OAuth
 	e.GET("/auth/github", s.githubAuth)
 	e.GET("/auth/github/callback", s.githubCallback)
+	e.GET("/auth/google", s.googleAuth)
+	e.GET("/auth/google/callback", s.googleCallback)
 	//-- Dev testing
 	e.GET("/dev/success", devSuccess)
 	e.GET("/dev/failed", devFailed)

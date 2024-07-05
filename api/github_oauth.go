@@ -53,6 +53,6 @@ func (s *session) githubCallback(ctx echo.Context) error {
 	method := "github"
 
 	// Login user
-	s.login(ctx, id, username, picture, method)
+	s.signin(ctx, id, username, picture, method)
 	return ctx.Redirect(http.StatusMovedPermanently, s.successURL)
 }
