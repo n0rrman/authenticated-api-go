@@ -30,6 +30,8 @@ func main() {
 	e.GET("/auth/github/callback", s.githubCallback)
 	e.GET("/auth/google", s.googleAuth)
 	e.GET("/auth/google/callback", s.googleCallback)
+	e.GET("/auth/discord", s.discordAuth)
+	e.GET("/auth/discord/callback", s.discordCallback)
 	//-- Dev testing
 	e.GET("/dev/success", devSuccess)
 	e.GET("/dev/failed", devFailed)

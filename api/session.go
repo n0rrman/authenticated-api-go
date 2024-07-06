@@ -55,7 +55,7 @@ func (s *session) signin(ctx echo.Context, id string, username string, pictureUR
 	sess.Values["pictureURL"] = pictureURL
 	sess.Values["method"] = method
 
-	fmt.Println(method, "id:", id, "username:", username, "signed in")
+	fmt.Println(method, "id:", id, "username:", username, pictureURL, "signed in")
 	sess.Save(ctx.Request(), ctx.Response())
 }
 
