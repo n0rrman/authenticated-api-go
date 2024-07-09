@@ -5,7 +5,7 @@ services:
   server:
     build: .
     ports:
-      - "80:80"
+      - "443:443"
     networks:
       - auth_api
     env_file:

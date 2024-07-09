@@ -18,7 +18,10 @@ func main() {
 	s.init()
 
 	// Middleware
+	e.Pre(middleware.HTTPSNonWWWRedirect())
 	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
 	// Routes
@@ -39,5 +42,8 @@ func main() {
 	e.GET("/dev/failed", devFailed)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":80"))
+	e.Logger.Fatal(e.StartTLS(":443", "localhost.crt", "localhost.key"))
+	// e.AutoTLSManager.Cache = autocert.DirCache(".cache")
+	// go e.Logger.Fatal(e.Start(":80"))
+	// e.Logger.Fatal(e.StartAutoTLS(":443"))
 }
