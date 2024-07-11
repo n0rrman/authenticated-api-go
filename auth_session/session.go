@@ -1,4 +1,4 @@
-package main
+package auth_session
 
 import (
 	"context"
@@ -73,4 +73,13 @@ func (s *session) signout(ctx echo.Context) error {
 func (s *session) isAuthenticated(c echo.Context) bool {
 	sess, _ := s.store.Get(c.Request(), s.name)
 	return sess.Values["authenticated"] != nil
+}
+
+func (s *session) statusCheck(ctx echo.Context) error {
+	auth := s.isAuthenticated(ctx)
+	if auth {
+		return ctx.String(http.StatusOK, "signed in")
+	} else {
+		return ctx.String(http.StatusForbidden, "not signed in")
+	}
 }
